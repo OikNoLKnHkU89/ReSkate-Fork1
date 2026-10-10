@@ -2,15 +2,14 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "vs2022-x64",
-      "displayName": "Visual Studio 2022 x64",
-      "generator": "Visual Studio 17 2022",
+      "name": "vs2026-x64",
+      "displayName": "Visual Studio 2026 x64",
+      "generator": "Visual Studio 18 2026",
       "architecture": "x64",
-      "binaryDir": "${sourceDir}/build/vs2022-x64",
+      "binaryDir": "${sourceDir}/build/vs2026-x64",
       "environment": {
         "VCLibPackagePath": "${sourceDir}/build/no-vcpkg/vcpkg.user"
-      },
-      "toolset": "v143"
+      }
     },
     {
       "name": "linux-x64",
@@ -25,7 +24,7 @@
   "buildPresets": [
     {
       "name": "release",
-      "configurePreset": "vs2022-x64",
+      "configurePreset": "vs2026-x64",
       "configuration": "Release"
     },
     {

@@ -130,13 +130,14 @@ bool refresh_cosmetic_catalog() {
         !read(manager + 0x3c, current_count) || current_count != count) return false;
     const auto& catalogs = content_cache::catalogs();
     c.ownership_unavailable = !catalogs.available;
-    std::vector<std::string> keys, objects, reserved_keys, reserved_objects;
+   std::vector<std::string> keys, objects, reserved_keys, reserved_objects;
     for (const auto& [key, info] : items) {
-        std::string folded = key;
-        for (auto& letter : folded) if (letter >= 'A' && letter <= 'Z') letter = static_cast<char>(letter + ('a' - 'A'));
-        const bool held = catalogs.reserved(folded);
-        (info.build_kit ? (held ? reserved_objects : objects) : (held ? reserved_keys : keys)).push_back(key);
+        if (info.build_kit)
+            objects.push_back(key);
+        else
+            keys.push_back(key);
     }
+
     if (!c.ownership_unavailable) {
         s.store->seed_cosmetic_inventory(keys);
         s.store->seed_object_inventory(objects);
