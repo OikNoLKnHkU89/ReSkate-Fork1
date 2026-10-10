@@ -1,4 +1,5 @@
 #include "developer_identity.h"
+#include "word_lists.h"
 #include "Engine/Core/Log/logging.h"
 #include "Engine/Vfs/https_download.h"
 #include <Windows.h>
@@ -23,12 +24,18 @@ void fetch() noexcept {
                                             L"ReSkate-Identity/1", &download);
         if (answer) {
             auto lists = parse_identity_lists(*answer);
+            server_tokens_rule = parse_server_tokens_required(*answer);
             const auto developers = lists[0].size(), homies = lists[1].size(), creators = lists[2].size(),
                        bans = lists[static_cast<std::size_t>(IdentityList::banned)].size();
             if (publish_identity_lists(std::move(lists)) || failing)
                 logging::log(logging::Level::info, logging::Channel::runtime,
                              "Identity lists: {} developer(s), {} homie(s), {} content creator(s), {} banned.", developers,
                              homies, creators, bans);
+            // The chat word lists come in the same answer (word_lists.h).
+            if (const auto words = use_word_lists(*answer); words.changed)
+                logging::log(logging::Level::info, logging::Channel::runtime,
+                             "Word lists: {} filtered and {} not allowed at all, from the ReSkate backend.", words.filtered,
+                             words.forbidden);
             ok = true;
         } else if (!failing) {
             logging::log(logging::Level::info, logging::Channel::runtime,
